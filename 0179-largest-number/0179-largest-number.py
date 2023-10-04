@@ -1,6 +1,6 @@
 class Solution:
     def largestNumber(self, nums: List[int]) -> str:
-        if all(num == 0 for num in nums):  # 모든 숫자가 0일 경우
+        if all(num == 0 for num in nums): 
             return "0"
 
         nums = list(map(str, nums))
