@@ -1,35 +1,54 @@
-# Definition for singly-linked list.
-# class ListNode(object):
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-class Solution(object):
+class Solution:
     def sortList(self, head):
-        if not head or not head.next: #리스트가 비어있으면 그대로 반환
+        if not head or not head.next:
             return head
-        temp1 = head.next 
-        temp2 = head
-        while temp1 and temp1.next: #템프 1 이랑 2를 증가시키면서 중간부분 찾기
-            temp1 = temp1.next.next
-            temp2 = temp2.next
-        first = temp2.next #first에 중간부분 할당
-        temp2.next = None
-        a = self.sortList(head) #재귀함수
-        b = self.sortList(first)#a 와 b에  
-        return self.merge(a, b)
-        
-        
-    def merge(self, a, b):
-        if not a or not b:
-            return a or b
-        d = c = ListNode(0) #d와 c 초기화
-        while a and b: #두 리스트중 더 작은 숫자를 연결해줌
-            if a.val < b.val: 
-                c.next = a
-                a = a.next
+
+        # 연결 리스트의 길이를 계산
+        length = 0
+        temp1 = head
+        while temp1:
+            length += 1
+            temp1 = temp1.next
+
+        # 퀵 정렬을 위해 머지 소트와 비슷한 접근 사용
+        temp2 = ListNode(0)
+        temp2.next = head
+        step = 1
+
+        while step < length:
+            temp1 = temp2.next
+            tail = temp2
+            while temp1:
+                left = temp1
+                right = self.split(left, step)
+                temp1 = self.split(right, step)
+                tail = self.merge(left, right, tail)
+            step *= 2
+
+        return temp2.next
+
+    def split(self, head, step):
+        if not head:
+            return None
+        for i in range(1, step):
+            if not head.next:
+                break
+            head = head.next
+        right = head.next
+        head.next = None
+        return right
+
+    def merge(self, left, right, head):
+        temp1 = head
+        while left and right:
+            if left.val < right.val:
+                temp1.next = left
+                left = left.next
             else:
-                c.next = b
-                b = b.next
-            c = c.next
-        c.next = a or b
-        return d.next
+                temp1.next = right
+                right = right.next
+            temp1 = temp1.next
+        temp1.next = left or right
+        while temp1.next:
+            temp1 = temp1.next
+        return temp1
