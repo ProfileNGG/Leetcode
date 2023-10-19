@@ -1,54 +1,64 @@
-class Solution:
-    def sortList(self, head):
+class Solution(object):
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        #노드 비었거나 하나일때 그냥 반환해주기
         if not head or not head.next:
             return head
 
-        # 연결 리스트의 길이를 계산
-        length = 0
-        temp1 = head
-        while temp1:
-            length += 1
-            temp1 = temp1.next
+        # 피벗 값을 맨 앞에있는 값으로 선택
+        temp3 = head
+        temp4 = head
+        num = 0
+        while temp3:
+            temp3 = temp3.next
+            num = num + 1
+        for i in range(num//2):
+            temp4 = temp4.next
+        pivot = temp4.val
 
-        # 퀵 정렬을 위해 머지 소트와 비슷한 접근 사용
-        temp2 = ListNode(0)
-        temp2.next = head
-        step = 1
+        # 작은 값, 같은 값, 큰 값에 대한 세 개의 연결 리스트 생성
+        small_head = small_tail = ListNode(0)
+        same_head = same_tail = ListNode(0)
+        big_head = big_tail = ListNode(0)
 
-        while step < length:
-            temp1 = temp2.next
-            tail = temp2
-            while temp1:
-                left = temp1
-                right = self.split(left, step)
-                temp1 = self.split(right, step)
-                tail = self.merge(left, right, tail)
-            step *= 2
+        temp = head
+        #각각 리스트에 값에 따른 노드 추가
+        while temp:
 
-        return temp2.next
+            if temp.val < pivot:
+                small_tail.next = temp
+                small_tail = small_tail.next
 
-    def split(self, head, step):
-        if not head:
-            return None
-        for i in range(1, step):
-            if not head.next:
-                break
-            head = head.next
-        right = head.next
-        head.next = None
-        return right
+            elif temp.val == pivot:
+                same_tail.next = temp
+                same_tail = same_tail.next
 
-    def merge(self, left, right, head):
-        temp1 = head
-        while left and right:
-            if left.val < right.val:
-                temp1.next = left
-                left = left.next
             else:
-                temp1.next = right
-                right = right.next
-            temp1 = temp1.next
-        temp1.next = left or right
-        while temp1.next:
-            temp1 = temp1.next
-        return temp1
+                big_tail.next = temp
+                big_tail = big_tail.next
+            temp = temp.next
+
+        # 리스트들을 끊어주는 작업(안하면 무한재귀 돌 수 있음)
+        small_tail.next = None
+        same_tail.next = None
+        big_tail.next = None
+
+        # 작은 값과 큰 값 부분 리스트를 재귀적으로 정렬
+        sorted_small = self.sortList(small_head.next)
+        sorted_big = self.sortList(big_head.next)
+
+        # 정렬된 부분 리스트를 연결
+        if not sorted_small: #작은리스트 비어있으면 스킵하기
+            sorted_head = same_head.next
+        else:
+            sorted_head = sorted_small
+            temp = sorted_small
+            while temp.next:
+                temp = temp.next
+            temp.next = same_head.next
+
+        temp = sorted_head
+        while temp.next:
+            temp = temp.next
+        temp.next = sorted_big
+
+        return sorted_head
