@@ -10,7 +10,7 @@ class Solution:
         if start > end:
             return None
         
-        mid = (start + end) //2 #중간
+        mid = (start + end) // 2 #중간 (이걸 안놔누면 연결 리스트로 만들 수 있음)
         node = Tree(nums[mid], mid) #중간 번호로 노드만들기 
         node.left = self.sort(nums, start, mid - 1)# l child 미드를 1 빼서 엔드에 넣음
         node.right = self.sort(nums, mid + 1, end)# r child 미드를 1 더해서 스타트에 넣음
