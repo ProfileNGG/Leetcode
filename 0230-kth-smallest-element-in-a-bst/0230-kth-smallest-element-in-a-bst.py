@@ -11,12 +11,12 @@ class Solution(object):
         :type k: int
         :rtype: int
         """
-        self.k = k
+        self.k = k # 전역변수로 재귀하면서도 변수 유지
         self.kth = 0
         self.find(root)
         return self.kth
         
-    def find(self, root):
+    def find(self, root): # 노드 순회하면서 몇번인지 확인
         if not root:
             return
         self.find(root.left)
