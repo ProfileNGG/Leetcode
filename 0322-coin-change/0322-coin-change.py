@@ -7,4 +7,5 @@ class Solution:
                 lst[i] = min(lst[i],lst[i-coin]+1)
 
         return -1 if lst[-1] == (amount + 1) else lst[-1]
-            
+        
+    
